@@ -1,0 +1,7 @@
+uv.lock
+.venv/
+__pycache__/
+.python-version
+.DS_Store
+cpython-312.pyc
+build.sh
