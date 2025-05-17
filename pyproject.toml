@@ -23,7 +23,7 @@ build-backend = "hatchling.build"
 packages = ["page_analyzer"]
 
 [project.scripts]
-
+app = "page_analyzer.app:app"
 
 [project.optional-dependencies]
 dev = [
