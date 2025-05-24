@@ -11,7 +11,10 @@ app = Flask(__name__, template_folder='../templates')
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
 DATABASE_URL = os.getenv('DATABASE_URL')
-conn = psycopg2.connect(DATABASE_URL)
+
+
+def get_db_connection():
+    return psycopg2.connect(DATABASE_URL, sslmode='require')
 
 
 @app.route("/")
@@ -32,11 +35,12 @@ def add_url():
         return render_template("index.html"), 422
 
     normalized_url = f'{urlparse(url).scheme}://{urlparse(url).netloc}'
-    with conn.cursor() as cur:
-        cur.execute(
-            'SELECT id from urls WHERE name = %s;',
-            (normalized_url,)
-        )
+    with get_db_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                'SELECT id from urls WHERE name = %s;',
+                (normalized_url,)
+            )
         flash('Страница уже существует', 'success')
 
         cur.execute(
@@ -52,8 +56,9 @@ def add_url():
 
 @app.route('/urls')
 def list_urls():
-    with conn.cursor() as cur:
-        cur.execute('SELECT * FROM urls ORDER BY created_at DESC;')
+    with get_db_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute('SELECT * FROM urls ORDER BY created_at DESC;')
 
         urls = cur.fetchall()
     return render_template('urls/index.html', urls=urls)
@@ -61,6 +66,7 @@ def list_urls():
 
 @app.route('/urls/<int:id>')
 def show_url(id):
-    with conn.cursor() as cur:
-        cur.execute('SELECT * FROM urls WHERE id = %s;', (id,))
-        return render_template('urls/show.html', url=cur.fetchone())
+    with get_db_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute('SELECT * FROM urls WHERE id = %s;', (id,))
+    return render_template('urls/show.html', url=cur.fetchone())
