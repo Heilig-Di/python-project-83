@@ -69,4 +69,34 @@ def show_url(id):
     with get_db_connection() as conn:
         with conn.cursor() as cur:
             cur.execute('SELECT * FROM urls WHERE id = %s;', (id,))
-    return render_template('urls/show.html', url=cur.fetchone())
+            url = cur.fetchone()
+
+            cur.execute('''
+                        SELECT url_id, created_at
+                        FROM url_ckecks
+                        WHERE url_id = %s;
+                        ''', (id,))
+            checks = cur.fetchone()
+    return render_template('urls/show.html', url=url, checks=checks)
+
+
+@app.post('urls/<int:id>/checks')
+def check_id(id):
+    try:
+        with get_db_connection() as conn:
+            with conn.cursor() as cur:
+                cur.execute('SELECT * FROM urls WHERE id = %s;', (id,))
+
+                cur.execute('''
+                            INSERT INTO url_checks (url_id)
+                            VALUES (%s)
+                            RETURNING id;
+                            ''', (id,))
+            conn.commit()
+        flash('Страница успешно проверена', 'success')
+
+
+    except Exception as e:
+
+        flash('Произошла ошибка при проверке', 'danger')
+        return redirect(url_for('show_url', id=id))
