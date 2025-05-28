@@ -83,7 +83,7 @@ def show_url(id):
     return render_template("urls/show.html", url=url, checks=checks)
 
 
-@app.post("urls/<int:id>/checks")
+@app.post("/urls/<int:id>/checks")
 def check_id(id):
     try:
         with get_db_connection() as conn:
