@@ -7,6 +7,7 @@
       <th>ID</th>
       <th>URL</th>
       <th>Дата создания</th>
+      <th>Код ответа</th>
     </tr>
   </thead>
   <tbody>
@@ -15,6 +16,7 @@
       <td>{{ url[0] }}</td>
       <td><a href="{{ url_for('show_url', id=url[0] }}">{{ url[1] }}</a></td>
       <td>{{ url[2].strftime('%Y-%m-%d') }}</td>
+      <td>{{ url[3] if url[3] else '' }}</td>
     </tr>
     {% endfor %}
   </tbody>
