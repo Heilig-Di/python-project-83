@@ -58,10 +58,10 @@ def list_urls():
         with conn.cursor() as cur:
             cur.execute('''
                         SELECT
-                        u.id, u.name, MAX(uc.created_at), uc.status_code
+                        u.id, u.name, uc.status_code, MAX(uc.created_at)
                         FROM urls as u
                         JOIN url_checks as uc ON u.id=uc.url_id
-                        GROUP BY u.id, u.name
+                        GROUP BY u.id, u.name, uc.status_code
                         ORDER BY u.id DESC;''')
 
         urls = cur.fetchall()
