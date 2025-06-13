@@ -6,6 +6,7 @@ import requests
 from datetime import datetime
 from dotenv import load_dotenv
 from urllib.parse import urlparse
+from bs4 import BeautifulSoup
 
 load_dotenv()
 app = Flask(__name__, template_folder="../templates")
@@ -85,30 +86,6 @@ def show_url(id):
 
 
 @app.post("/urls/<int:id>/checks")
-def check_id(id):
-    try:
-        with get_db_connection() as conn:
-            with conn.cursor() as cur:
-                cur.execute("SELECT * FROM urls WHERE id = %s;", (id,))
-
-                cur.execute(
-                    """
-                            INSERT INTO url_checks (url_id)
-                            VALUES (%s)
-                            RETURNING id;
-                            """,
-                    (id,),
-                )
-            conn.commit()
-        flash("Страница успешно проверена", "success")
-
-    except Exception as e:
-
-        flash("Произошла ошибка при проверке", "danger")
-        return redirect(url_for("show_url", id=id))
-
-
-@app.post("/urls/<int:id>/checks")
 def check_url(id):
     with get_db_connection() as conn:
         with conn.cursor() as cur:
@@ -122,8 +99,17 @@ def check_url(id):
             url = url_record[0]
 
     try:
-        response = requests.get(url)
+        response = requests.get(url, timeout=5)
         response.raise_for_status()
+        status_code = response.status_code
+        soup = BeautifulSoup(response.text, 'html.parser')
+
+        h1 = (soup.find('h1')).get_text(strip=True) if soup.find('h1') else None
+        title = (soup.find('title')).get_text(strip=True) if soup.find('title') else None
+
+        meta = soup.find('meta', attrs={"name": "description"}) if soup.find('meta') else None
+        description = meta['content'].strip() if meta.get('content') else None
+
     except requests.exceptions.HTTPError:
         flash('Произошла ошибка при проверке', 'danger')
         return redirect(url_for('show_url', id=id))
@@ -131,9 +117,9 @@ def check_url(id):
     with get_db_connection() as conn:
         with conn.cursor() as cur:
             cur.execute("""
-                        INSERT INTO url_checks (url_id, status_code)
-                        VALUES (%s, %s);
-                        """, (id, status_code))
+                        INSERT INTO url_checks (url_id, status_code, h1, title, description)
+                        VALUES (%s, %s, %s, %s, %s);
+                        """, (id, status_code, h1, title, description, create_at))
             conn.commit()
     flash('Страница успешно проверена', 'success')
     return redirect(url_for("show_url", id=id))
