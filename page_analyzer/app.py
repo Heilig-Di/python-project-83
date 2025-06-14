@@ -86,7 +86,7 @@ def show_url(id):
                         FROM url_checks
                         WHERE url_id = %s;
                         """, (id,))
-            checks = cur.fetchone()
+            checks = cur.fetchall()
     return render_template("urls/show.html", url=url, checks=checks)
 
 
