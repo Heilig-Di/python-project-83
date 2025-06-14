@@ -44,14 +44,14 @@ def add_url():
 
             if url_record:
                 flash("Страница уже существует", "success")
-                new_record = cur.fetchone()
-                url_id = new_record[0]
+                url_id = url_record[0]
             else:
                 cur.execute(
                     "INSERT INTO urls (name, created_at) VALUES (%s, %s) RETURNING id;",
                     (normalized_url, datetime.now()),
                 )
-                url_id = url_record[0]
+                new_record = cur.fetchone()
+                url_id = new_record[0]
                 conn.commit()
                 flash("Страница успешно добавлена", "success")
 
