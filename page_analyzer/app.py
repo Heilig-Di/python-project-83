@@ -40,15 +40,15 @@ def add_url():
     with get_db_connection() as conn:
         with conn.cursor() as cur:
             cur.execute("SELECT id from urls WHERE name = %s;", (normalized_url,))
-        flash("Страница уже существует", "success")
+            flash("Страница уже существует", "success")
 
-        cur.execute(
-            "INSERT INTO urls (name, created_at) VALUES (%s, %s) RETURNING id;",
-            (normalized_url, datetime.now()),
-        )
-        url_id = cur.fetchone()[0]
-        conn.commit()
-        flash("Страница успешно добавлена", "success")
+            cur.execute(
+                "INSERT INTO urls (name, created_at) VALUES (%s, %s) RETURNING id;",
+                (normalized_url, datetime.now()),
+            )
+            url_id = cur.fetchone()[0]
+            conn.commit()
+            flash("Страница успешно добавлена", "success")
 
     return redirect(url_for("show_url", id=url_id))
 
@@ -65,7 +65,7 @@ def list_urls():
                         GROUP BY u.id, u.name, uc.status_code
                         ORDER BY u.id DESC;''')
 
-        urls = cur.fetchall()
+            urls = cur.fetchall()
     return render_template("urls/index.html", urls=urls)
 
 
