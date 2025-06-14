@@ -40,15 +40,20 @@ def add_url():
     with get_db_connection() as conn:
         with conn.cursor() as cur:
             cur.execute("SELECT id from urls WHERE name = %s;", (normalized_url,))
-            flash("Страница уже существует", "success")
+            url_record = cur.fetchone()
 
-            cur.execute(
-                "INSERT INTO urls (name, created_at) VALUES (%s, %s) RETURNING id;",
-                (normalized_url, datetime.now()),
-            )
-            url_id = cur.fetchone()[0]
-            conn.commit()
-            flash("Страница успешно добавлена", "success")
+            if url_record:
+                flash("Страница уже существует", "success")
+                new_record = cur.fetchone()
+                url_id = new_record[0]
+            else:
+                cur.execute(
+                    "INSERT INTO urls (name, created_at) VALUES (%s, %s) RETURNING id;",
+                    (normalized_url, datetime.now()),
+                )
+                url_id = url_record[0]
+                conn.commit()
+                flash("Страница успешно добавлена", "success")
 
     return redirect(url_for("show_url", id=url_id))
 
