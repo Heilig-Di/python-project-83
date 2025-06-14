@@ -15,7 +15,8 @@ dependencies = [
     "ruff>=0.9.7",
     "validators>=0.20.0",
     "requests>=2.31.0",
-    "beautifulsoup4>=4.13.3"
+    "beautifulsoup4>=4.13.3",
+    "lxml>=5.4.0"
 ]
 
 [build-system]

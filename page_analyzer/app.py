@@ -102,7 +102,7 @@ def check_url(id):
         response = requests.get(url, timeout=5)
         response.raise_for_status()
         status_code = response.status_code
-        soup = BeautifulSoup(response.text, 'html.parser')
+        soup = BeautifulSoup(response.text, 'lxml')
 
         h1 = (soup.find('h1')).get_text(strip=True) if soup.find('h1') else None
         title = (soup.find('title')).get_text(strip=True) if soup.find('title') else None
