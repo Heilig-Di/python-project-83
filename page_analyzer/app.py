@@ -77,7 +77,7 @@ def show_url(id):
             url = cur.fetchone()
 
             cur.execute("""
-                        SELECT url_id, created_at, status_code
+                        SELECT *
                         FROM url_checks
                         WHERE url_id = %s;
                         """, (id,))
@@ -119,7 +119,7 @@ def check_url(id):
             cur.execute("""
                         INSERT INTO url_checks (url_id, status_code, h1, title, description)
                         VALUES (%s, %s, %s, %s, %s);
-                        """, (id, status_code, h1, title, description, create_at))
+                        """, (id, status_code, h1, title, description))
             conn.commit()
     flash('Страница успешно проверена', 'success')
     return redirect(url_for("show_url", id=id))
