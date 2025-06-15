@@ -48,7 +48,7 @@ def add_url():
             else:
                 cur.execute(
                     "INSERT INTO urls (name, created_at) VALUES (%s, NOW()) RETURNING id;",
-                    (normalized_url, datetime.now()),
+                    (normalized_url, datetime.date()),
                 )
                 new_record = cur.fetchone()
                 url_id = new_record[0]
@@ -124,7 +124,7 @@ def check_url(id):
             cur.execute("""
                         INSERT INTO url_checks (url_id, status_code, h1, title, description, created_at)
                         VALUES (%s, %s, %s, %s, %s, NOW());
-                        """, (id, status_code, h1, title, description, created_at))
+                        """, (id, status_code, h1, title, description, datetime.date()))
             conn.commit()
     flash('Страница успешно проверена', 'success')
     return redirect(url_for("show_url", id=id))
