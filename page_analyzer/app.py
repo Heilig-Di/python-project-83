@@ -122,9 +122,9 @@ def check_url(id):
     with get_db_connection() as conn:
         with conn.cursor() as cur:
             cur.execute("""
-                        INSERT INTO url_checks (url_id, status_code, h1, title, description)
-                        VALUES (%s, %s, %s, %s, %s);
-                        """, (id, status_code, h1, title, description))
+                        INSERT INTO url_checks (url_id, status_code, h1, title, description, created_at)
+                        VALUES (%s, %s, %s, %s, %s, NOW());
+                        """, (id, status_code, h1, title, description, created_at))
             conn.commit()
     flash('Страница успешно проверена', 'success')
     return redirect(url_for("show_url", id=id))
