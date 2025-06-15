@@ -26,9 +26,9 @@ def index():
 
 @app.route("/urls", methods=["POST"])
 def add_url():
-    url = request.form.get("url")
+    url = request.form.get("url", "").strip()
 
-    if not validators.url(url):
+    if not url or not validators.url(url):
         flash("Некорректный URL", "danger")
         return render_template("index.html"), 422
 
@@ -47,8 +47,8 @@ def add_url():
                 url_id = url_record[0]
             else:
                 cur.execute(
-                    "INSERT INTO urls (name, created_at) VALUES (%s, NOW()) RETURNING id;",
-                    (normalized_url, datetime.now()),
+                    "INSERT INTO urls (name) VALUES (%s) RETURNING id;",
+                    (normalized_url,),
                 )
                 new_record = cur.fetchone()
                 url_id = new_record[0]
@@ -64,7 +64,9 @@ def list_urls():
         with conn.cursor() as cur:
             cur.execute('''
                         SELECT
-                            u.id, u.name, MAX(uc.created_at),
+                            u.id,
+                            u.name,
+                            MAX(uc.created_at),
                             (SELECT status_code
                             FROM url_checks
                             WHERE url_id=u.id
@@ -127,9 +129,9 @@ def check_url(id):
     with get_db_connection() as conn:
         with conn.cursor() as cur:
             cur.execute("""
-                        INSERT INTO url_checks (url_id, status_code, h1, title, description, created_at)
-                        VALUES (%s, %s, %s, %s, %s, NOW());
-                        """, (id, status_code, h1, title, description, datetime.now()))
+                        INSERT INTO url_checks (url_id, status_code, h1, title, description)
+                        VALUES (%s, %s, %s, %s, %s);
+                        """, (id, status_code, h1, title, description))
             conn.commit()
     flash('Страница успешно проверена', 'success')
     return redirect(url_for("show_url", id=id))
