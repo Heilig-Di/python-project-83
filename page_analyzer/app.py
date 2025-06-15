@@ -68,7 +68,7 @@ def list_urls():
                             (SELECT status_code
                             FROM url_checks
                             WHERE url_id=u.id
-                            ORDER BY created_at DECS
+                            ORDER BY created_at DESC
                             LIMIT 1) as last_status
                         FROM urls as u
                         LEFT JOIN url_checks as uc ON u.id=uc.url_id
