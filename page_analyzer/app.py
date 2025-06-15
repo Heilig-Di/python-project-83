@@ -64,10 +64,15 @@ def list_urls():
         with conn.cursor() as cur:
             cur.execute('''
                         SELECT
-                        u.id, u.name, uc.status_code, MAX(uc.created_at)
+                            u.id, u.name, MAX(uc.created_at),
+                            (SELECT status_code
+                            FROM url_checks
+                            WHERE url_id=u.id
+                            ORDER BY created_at DECS
+                            LIMIT 1) as last_status
                         FROM urls as u
-                        JOIN url_checks as uc ON u.id=uc.url_id
-                        GROUP BY u.id, u.name, uc.status_code
+                        LEFT JOIN url_checks as uc ON u.id=uc.url_id
+                        GROUP BY u.id
                         ORDER BY u.id DESC;''')
 
             urls = cur.fetchall()
@@ -112,8 +117,8 @@ def check_url(id):
         h1 = (soup.find('h1')).get_text(strip=True) if soup.find('h1') else None
         title = (soup.find('title')).get_text(strip=True) if soup.find('title') else None
 
-        meta = soup.find('meta', attrs={"name": "description"}) if soup.find('meta') else None
-        description = meta['content'].strip() if meta.get('content') else None
+        meta = soup.find('meta', attrs={"name": "description"}) if )
+        description = meta['content'].strip() if meta and meta.get('content') else None
 
     except requests.exceptions.HTTPError:
         flash('Произошла ошибка при проверке', 'danger')
