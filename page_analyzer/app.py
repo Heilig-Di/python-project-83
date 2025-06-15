@@ -47,7 +47,7 @@ def add_url():
                 url_id = url_record[0]
             else:
                 cur.execute(
-                    "INSERT INTO urls (name, created_at) VALUES (%s, %s) RETURNING id;",
+                    "INSERT INTO urls (name, created_at) VALUES (%s, NOW()) RETURNING id;",
                     (normalized_url, datetime.now()),
                 )
                 new_record = cur.fetchone()
