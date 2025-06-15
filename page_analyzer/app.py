@@ -117,7 +117,7 @@ def check_url(id):
         h1 = (soup.find('h1')).get_text(strip=True) if soup.find('h1') else None
         title = (soup.find('title')).get_text(strip=True) if soup.find('title') else None
 
-        meta = soup.find('meta', attrs={"name": "description"}) if )
+        meta = soup.find('meta', attrs={"name": "description"})
         description = meta['content'].strip() if meta and meta.get('content') else None
 
     except requests.exceptions.HTTPError:
