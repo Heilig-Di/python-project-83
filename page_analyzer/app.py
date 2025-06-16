@@ -30,11 +30,11 @@ def add_url():
 
     if not url or not validators.url(url):
         flash("Некорректный URL", "danger")
-        return render_template("index.html"), 422
+        return redirect("index.html"), 422
 
     if len(url) > 255:
         flash("Некорректный URL", "danger")
-        return render_template("index.html"), 422
+        return redirect("index.html"), 422
 
     normalized_url = f"{urlparse(url).scheme}://{urlparse(url).netloc}"
     with get_db_connection() as conn:
@@ -78,6 +78,7 @@ def list_urls():
                         ORDER BY u.id DESC;''')
 
             urls = cur.fetchall()
+            conn.commit()
     return render_template("urls/index.html", urls=urls)
 
 
@@ -94,6 +95,7 @@ def show_url(id):
                         WHERE url_id = %s;
                         """, (id,))
             checks = cur.fetchall()
+            conn.commit()
     return render_template("urls/show.html", url=url, checks=checks)
 
 
@@ -132,6 +134,7 @@ def check_url(id):
                         INSERT INTO url_checks (url_id, status_code, h1, title, description)
                         VALUES (%s, %s, %s, %s, %s);
                         """, (id, status_code, h1, title, description))
-            conn.commit()
+
     flash('Страница успешно проверена', 'success')
+    conn.commit()
     return redirect(url_for("show_url", id=id))
