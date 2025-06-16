@@ -30,11 +30,11 @@ def add_url():
 
     if not url or not validators.url(url):
         flash("Некорректный URL", "danger")
-        return redirect("index.html"), 422
+        return render_template("index.html"), 422
 
     if len(url) > 255:
         flash("Некорректный URL", "danger")
-        return redirect("index.html"), 422
+        return render_template("index.html"), 422
 
     normalized_url = f"{urlparse(url).scheme}://{urlparse(url).netloc}"
     with get_db_connection() as conn:
