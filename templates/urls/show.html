@@ -10,12 +10,14 @@
       <tbody>
         <tr>
           <td>ID</td>
-          <td>Имя</td>
-          <td>Дата создания</td>
+          <td>{{ url[0] }}</td>
         </tr>
         <tr>
-          <td>{{ url[0] }}</td>
+          <td>Имя</td>
           <td>{{ url[1] }}</td>
+        </tr>
+        <tr>
+          <td>Дата создания</td>
           <td>{{ url[2].strftime('%Y-%m-%d') if url[2] else '' }}</td>
         </tr>
       </tbody>

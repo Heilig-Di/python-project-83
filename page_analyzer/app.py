@@ -52,8 +52,8 @@ def add_url():
                 )
                 new_record = cur.fetchone()
                 url_id = new_record[0]
-                conn.commit()
                 flash("Страница успешно добавлена", "success")
+                conn.commit()
 
     return redirect(url_for("show_url", id=url_id))
 
