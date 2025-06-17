@@ -44,7 +44,7 @@ def add_url():
 
             if url_record:
                 flash("Страница уже существует", "success")
-                url_id = url_record[0]
+                return redirect(url_for("show_url", id=url_record[0]))
             else:
                 cur.execute(
                     "INSERT INTO urls (name) VALUES (%s) RETURNING id;",
@@ -52,10 +52,8 @@ def add_url():
                 )
                 new_record = cur.fetchone()
                 conn.commit()
-                url_id = new_record[0]
                 flash("Страница успешно добавлена", "success")
-
-    return redirect(url_for("show_url", id=url_id))
+                return redirect(url_for("show_url", id=new_record[0]))
 
 
 @app.route("/urls")
