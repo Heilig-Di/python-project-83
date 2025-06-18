@@ -3,10 +3,15 @@ import validators
 
 def normal_url(url):
     parsed = urlparse(url)
-    normalized_url = f"parsed.scheme://parsed.netloc"
+
+    if not parsed.scheme:
+        url = "https://" + url
+        parsed = urlparse(url)
+    return f"{parsed.scheme}://{parsed.netloc}"
 
 
 def error(url):
+
     if not url or not validators.url(url):
         return "Некорректный URL" 
 

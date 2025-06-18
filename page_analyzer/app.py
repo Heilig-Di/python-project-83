@@ -4,7 +4,7 @@ import psycopg2
 import requests
 from datetime import datetime
 from dotenv import load_dotenv
-from parser import parser_html
+from html_parser import parser_html
 from normalize_url import normal_url, validate
 
 
