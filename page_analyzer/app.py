@@ -1,15 +1,15 @@
 from flask import Flask, render_template, request, flash, redirect, url_for
 import os
 import psycopg2
-import validators
 import requests
 from datetime import datetime
 from dotenv import load_dotenv
-from urllib.parse import urlparse
-from bs4 import BeautifulSoup
+from parser import parse_html
+from normalize_url import normal_url, validate
+
 
 load_dotenv()
-app = Flask(__name__, template_folder="../templates")
+app = Flask(__name__, template_folder="../page_analyzer/templates")
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 
 DATABASE_URL = os.getenv("DATABASE_URL")
@@ -28,15 +28,11 @@ def index():
 def add_url():
     url = request.form.get("url", "").strip()
 
-    if not url or not validators.url(url):
-        flash("Некорректный URL", "danger")
+    if error == validate(url):
+        flash(error, "danger")
         return render_template("index.html"), 422
 
-    if len(url) > 255:
-        flash("Некорректный URL", "danger")
-        return render_template("index.html"), 422
-
-    normalized_url = f"{urlparse(url).scheme}://{urlparse(url).netloc}"
+    normalized_url = normal_url(url)
     with get_db_connection() as conn:
         with conn.cursor() as cur:
             cur.execute("SELECT id from urls WHERE name = %s;", (normalized_url,))
@@ -114,13 +110,8 @@ def check_url(id):
         response = requests.get(url, timeout=5)
         response.raise_for_status()
         status_code = response.status_code
-        soup = BeautifulSoup(response.text, 'lxml')
 
-        h1 = (soup.find('h1')).get_text(strip=True) if soup.find('h1') else None
-        title = (soup.find('title')).get_text(strip=True) if soup.find('title') else None
-
-        meta = soup.find('meta', attrs={"name": "description"})
-        description = meta['content'].strip() if meta and meta.get('content') else None
+        seo_data = parser_html(response.text)
 
     except requests.exceptions.HTTPError:
         flash('Произошла ошибка при проверке', 'danger')
