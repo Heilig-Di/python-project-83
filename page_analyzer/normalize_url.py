@@ -10,7 +10,7 @@ def normal_url(url):
     return f"{parsed.scheme}://{parsed.netloc}"
 
 
-def vlidate(url):
+def validate(url):
 
     if not url or not validators.url(url):
         return "Некорректный URL" 
