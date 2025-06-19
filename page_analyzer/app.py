@@ -28,7 +28,7 @@ def index():
 def add_url():
     url = request.form.get("url", "").strip()
 
-    error = validate(url):
+    error = validate(url)
     if error:
         flash(error, "danger")
         return render_template("index.html"), 422
