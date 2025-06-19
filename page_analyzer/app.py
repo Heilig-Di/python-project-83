@@ -4,9 +4,7 @@ import psycopg2
 import requests
 from datetime import datetime
 from dotenv import load_dotenv
-from html_parser import parser_html
-from normalize_url import normal_url, validate
-
+from .html_parser import parser_html
 
 load_dotenv()
 app = Flask(__name__, template_folder="../page_analyzer/templates")
