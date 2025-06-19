@@ -4,6 +4,7 @@ import psycopg2
 import requests
 from datetime import datetime
 from dotenv import load_dotenv
+from normalize_url import normal_url, validate
 from .html_parser import parser_html
 
 load_dotenv()
@@ -130,5 +131,3 @@ def check_url(id):
     flash('Страница успешно проверена', 'success')
     conn.commit()
     return redirect(url_for("show_url", id=id))
-
-from .normalize_url import normal_url, validate
