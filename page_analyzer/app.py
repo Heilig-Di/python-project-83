@@ -28,7 +28,8 @@ def index():
 def add_url():
     url = request.form.get("url", "").strip()
 
-    if error == validate(url):
+    error = validate(url):
+    if error:
         flash(error, "danger")
         return render_template("index.html"), 422
 
@@ -112,6 +113,10 @@ def check_url(id):
         status_code = response.status_code
 
         seo_data = parser_html(response.text)
+        h1 = seo_data['h1']
+        title = seo_data['title']
+        meta = seo_data['meta']
+        description = seo_data['description']
 
     except requests.exceptions.HTTPError:
         flash('Произошла ошибка при проверке', 'danger')
