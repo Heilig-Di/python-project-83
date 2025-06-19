@@ -45,5 +45,5 @@ rm -rf python-project-83
 
 ##### Готово
 
-![Вы великолепны](//https://kartinkof.club/uploads/posts/2022-03/1648380246_5-kartinkof-club-p-mem-ti-potryasayushchii-5.jpg/200x100)
+![Вы великолепны](https://kartinkof.club/uploads/posts/2022-03/1648380246_5-kartinkof-club-p-mem-ti-potryasayushchii-5.jpg)
 

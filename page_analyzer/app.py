@@ -34,7 +34,10 @@ def add_url():
     normalized_url = normal_url(url)
     with get_db_connection() as conn:
         with conn.cursor() as cur:
-            cur.execute("SELECT id from urls WHERE name = %s;", (normalized_url,))
+            cur.execute(
+                "SELECT id from urls WHERE name = %s;",
+                (normalized_url,)
+            )
             url_record = cur.fetchone()
 
             if url_record:
@@ -42,7 +45,8 @@ def add_url():
                 return redirect(url_for("show_url", id=url_record[0]))
             else:
                 cur.execute(
-                    "INSERT INTO urls (name, created_at) VALUES (%s, CURRENT_DATE) RETURNING id, created_at;",
+                    "INSERT INTO urls (name, created_at)"
+                    "VALUES (%s, CURRENT_DATE) RETURNING id, created_at;",
                     (normalized_url,),
                 )
                 new_record = cur.fetchone()
@@ -122,8 +126,9 @@ def check_url(id):
     with get_db_connection() as conn:
         with conn.cursor() as cur:
             cur.execute("""
-                        INSERT INTO url_checks (url_id, status_code, h1, title, description)
-                        VALUES (%s, %s, %s, %s, %s);
+                        INSERT INTO url_checks (
+                            url_id, status_code, h1, title, description
+                        ) VALUES (%s, %s, %s, %s, %s);
                         """, (id, status_code, h1, title, description))
 
     flash('Страница успешно проверена', 'success')
