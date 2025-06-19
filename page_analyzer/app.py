@@ -2,7 +2,6 @@ from flask import Flask, render_template, request, flash, redirect, url_for
 import os
 import psycopg2
 import requests
-from datetime import datetime
 from dotenv import load_dotenv
 from .normalize_url import normal_url, validate
 from .html_parser import parser_html
@@ -114,7 +113,6 @@ def check_url(id):
         seo_data = parser_html(response.text)
         h1 = seo_data['h1']
         title = seo_data['title']
-        meta = seo_data['meta']
         description = seo_data['description']
 
     except requests.exceptions.HTTPError:
