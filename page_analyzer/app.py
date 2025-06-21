@@ -7,8 +7,8 @@ from .normalize_url import normal_url, validate
 from .html_parser import parser_html
 
 load_dotenv()
-app = Flask(__name__, template_folder="../page_analyzer/templates") #NOSONAR
-app.config["SECRET_KEY"] = os.getenv("SECRET_KEY") #NOSONAR
+app = Flask(__name__, template_folder="../page_analyzer/templates")  #NOSONAR
+app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")  #NOSONAR
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
